@@ -34,12 +34,6 @@ public class EnemyPathing : MonoBehaviour
             var movementThisFrame = moveSpeed * Time.deltaTime;
             transform.position = Vector2.MoveTowards(transform.position, targetPosition, movementThisFrame);
 
-            Debug.Log(wayPointIndex);
-            Debug.Log(wayPoints.Count);
-
-            Debug.Log(transform.position);
-            Debug.Log(targetPosition);
-
             if(transform.position == targetPosition){
                 wayPointIndex++;
             }
