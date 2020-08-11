@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    
+    [SerializeField] int health = 1;
     [SerializeField] float moveSpeed = 10f;
     [SerializeField] float padding = 0.75f;
     [SerializeField] GameObject laserPrefabOne;
@@ -68,5 +70,14 @@ public class Player : MonoBehaviour
         xMax = gameCamera.ViewportToWorldPoint(new Vector3(1,0,0)).x - padding;
         yMin = gameCamera.ViewportToWorldPoint(new Vector3(0,0,0)).y + padding;
         yMax = gameCamera.ViewportToWorldPoint(new Vector3(0,1,0)).y - padding;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider){
+        DamageDealer damageDealer = collider.gameObject.GetComponent<DamageDealer>();
+        health -= damageDealer.GetDamage();
+        damageDealer.Hit();
+        if(health <= 0){
+            Destroy(gameObject);
+        }
     }
 }

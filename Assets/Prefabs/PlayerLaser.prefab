@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 3913439500442592694}
   - component: {fileID: 9006218358824589383}
   - component: {fileID: 8581975092020866039}
-  - component: {fileID: 2190507294228956074}
+  - component: {fileID: 3986786323072518679}
+  - component: {fileID: 9199625003261608292}
   m_Layer: 0
   m_Name: PlayerLaser
   m_TagString: Untagged
@@ -105,7 +106,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &2190507294228956074
+--- !u!114 &3986786323072518679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2289334971031053557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73d04cc946da0194999eb6690c1ab913, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+--- !u!61 &9199625003261608292
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,10 +129,10 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.0019017272, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -129,5 +143,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.37}
+  m_Size: {x: 0.13183802, y: 0.37}
   m_EdgeRadius: 0
