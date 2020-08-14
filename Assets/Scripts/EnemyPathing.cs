@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using PathCreation;
 
 public class EnemyPathing : MonoBehaviour
 {
@@ -8,13 +9,19 @@ public class EnemyPathing : MonoBehaviour
     List<Transform> wayPoints;
     int wayPointIndex = 0;
     float moveSpeed;
+    float movementThisFrame;
+
+    PathCreator pathCreator;
+    EndOfPathInstruction end;
 
     // Start is called before the first frame update
     void Start()
     {   
         moveSpeed = waveConfig.GetMoveSpeed();
-        wayPoints = waveConfig.GetWayPoints();
-        transform.position = wayPoints[wayPointIndex].transform.position;
+        //wayPoints = waveConfig.GetWayPoints();
+        pathCreator = waveConfig.GetPath();
+        transform.position = pathCreator.path.GetPoint(0);
+        end = EndOfPathInstruction.Stop;
     }
 
     // Update is called once per frame
@@ -29,7 +36,18 @@ public class EnemyPathing : MonoBehaviour
 
     private void MoveEnemy(){
         
-        if(wayPointIndex <= wayPoints.Count - 1){
+        movementThisFrame += moveSpeed * Time.deltaTime;
+        
+        transform.position = pathCreator.path.GetPointAtDistance(movementThisFrame, end);
+
+        
+        
+        if(pathCreator.path.GetClosestTimeOnPath(transform.position) == 1){
+            Destroy(gameObject);
+        }
+
+
+        /*if(wayPointIndex <= wayPoints.Count - 1){
             var targetPosition = wayPoints[wayPointIndex].transform.position;
             var movementThisFrame = moveSpeed * Time.deltaTime;
             transform.position = Vector2.MoveTowards(transform.position, targetPosition, movementThisFrame);
@@ -39,6 +57,7 @@ public class EnemyPathing : MonoBehaviour
             }
         } else {
             Destroy (gameObject);
-        }
+        }*/
+
     }
 }
