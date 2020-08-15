@@ -39,7 +39,8 @@ public class EnemyPathing : MonoBehaviour
         movementThisFrame += moveSpeed * Time.deltaTime;
         
         transform.position = pathCreator.path.GetPointAtDistance(movementThisFrame, end);
-
+        transform.rotation = pathCreator.path.GetRotationAtDistance(movementThisFrame, end) * Quaternion.Euler(0, -90, 90);
+        //transform.rotation = new Quaternion(0,0,transform.rotation.z,0);
         
         
         if(pathCreator.path.GetClosestTimeOnPath(transform.position) == 1){
