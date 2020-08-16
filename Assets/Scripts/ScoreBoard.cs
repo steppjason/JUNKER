@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using UnityEngine.SceneManagement;
 
 
 public class ScoreBoard : MonoBehaviour
@@ -18,6 +18,8 @@ public class ScoreBoard : MonoBehaviour
     [SerializeField] bool gameStart = false;
     [SerializeField] GameObject controlsSprite;
     [SerializeField] TextMeshProUGUI controlsText;
+
+    public bool playerDead = false;
     
     public bool doOnce = true;
 
@@ -39,8 +41,19 @@ public class ScoreBoard : MonoBehaviour
         if(Input.GetButtonDown("Submit") && !gameStart){
             gameStart = true;
             Destroy(controlsSprite);
-            Destroy(controlsText);
+            controlsText.text = "";
+        } else if(!gameStart && Input.GetButtonDown("Cancel")){
+            Application.Quit();
         }
+
+        if(playerDead && Input.GetButtonDown("Jump")){
+            SceneManager.LoadScene(0);
+            
+        } else if(playerDead && Input.GetButtonDown("Cancel")){
+            Application.Quit();
+        }
+
+       
     }
 
     IEnumerator UpdateGameText(){
@@ -63,5 +76,9 @@ public class ScoreBoard : MonoBehaviour
 
     public bool IsGameStart(){
         return gameStart;
+    }
+
+    public void IsPlayerDead(bool dead){
+        playerDead = dead;
     }
 }

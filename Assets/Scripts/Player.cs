@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -25,7 +26,11 @@ public class Player : MonoBehaviour
     Coroutine fireCoroutine;
 
     [SerializeField] TextMeshProUGUI gameBoardText;
+    [SerializeField] TextMeshProUGUI controlText;
+    [SerializeField] ScoreBoard scoreBoard;
+    
 
+    
     float xMin;
     float xMax;
     float yMin;
@@ -42,6 +47,7 @@ public class Player : MonoBehaviour
     {
         Move();
         Fire();
+        
     }
 
     private void Fire(){
@@ -108,6 +114,9 @@ public class Player : MonoBehaviour
             Destroy(explosion,3);
         }
         gameBoardText.text = "GAME OVER";
+        controlText.text = "Press R to Restart\n\nPress Esc to Quit";
+        //controlText.text = "Press R to Restart";
+        scoreBoard.IsPlayerDead(true);
     }
 
     public int GetDamage(){
