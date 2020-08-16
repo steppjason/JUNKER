@@ -15,21 +15,32 @@ public class ScoreBoard : MonoBehaviour
     [SerializeField] int gameScore = 0;
     [SerializeField] int textCount = 2;
     [SerializeField] string[] displayText;
+    [SerializeField] bool gameStart = false;
+    [SerializeField] GameObject controlsSprite;
+    [SerializeField] TextMeshProUGUI controlsText;
     
-    
+    public bool doOnce = true;
 
     // Start is called before the first frame update
     void Start()
     {
-        UpdateScoreBoard();
-        StartCoroutine(UpdateGameText());
-        //gameStartText.text = "Test";
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(gameStart && doOnce){
+            UpdateScoreBoard();
+            StartCoroutine(UpdateGameText());
+            doOnce = false;   
+        }
+
+        if(Input.GetButtonDown("Submit") && !gameStart){
+            gameStart = true;
+            Destroy(controlsSprite);
+            Destroy(controlsText);
+        }
     }
 
     IEnumerator UpdateGameText(){
@@ -48,5 +59,9 @@ public class ScoreBoard : MonoBehaviour
 
     public void UpdateScoreBoard(){
         score.text = String.Format("{0:n0}",gameScore);
+    }
+
+    public bool IsGameStart(){
+        return gameStart;
     }
 }

@@ -10,6 +10,8 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] bool looping = false;
     [SerializeField] bool firstWave = true;
 
+    [SerializeField] ScoreBoard scoreBoard;
+
     public Random rnd = new Random();
 
     // Start is called before the first frame update
@@ -29,18 +31,20 @@ public class EnemySpawner : MonoBehaviour
     }
 
     private IEnumerator SpawnAllWaves(){
-        if(firstWave){
-            int i = Random.Range(1, waveConfigs.Count - 1);
-            var currentWave = waveConfigs[i];
-            firstWave = false;
-            yield return new WaitForSeconds(6);
-            yield return SpawnAllEnemies(waveConfigs[i]);
-        } else {
-            int i = Random.Range(1, waveConfigs.Count - 1);
-            var currentWave = waveConfigs[i];
-            yield return new WaitForSeconds(waveConfigs[i].GetTimeBeforeWave());
-            yield return SpawnAllEnemies(waveConfigs[i]);
+        if(scoreBoard.IsGameStart()){
+            if(firstWave){
+                int i = Random.Range(1, waveConfigs.Count - 1);
+                var currentWave = waveConfigs[i];
+                firstWave = false;
+                yield return new WaitForSeconds(6);
+                yield return SpawnAllEnemies(waveConfigs[i]);
+            } else {
+                int i = Random.Range(0, waveConfigs.Count - 1);
+                var currentWave = waveConfigs[i];
+                yield return new WaitForSeconds(waveConfigs[i].GetTimeBeforeWave());
+                yield return SpawnAllEnemies(waveConfigs[i]);
 
+            }
         }
 
         // for(int i = startingWave; i < waveConfigs.Count; i++){
