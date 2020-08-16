@@ -7,12 +7,19 @@ public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] List<WaveConfig> waveConfigs;
     [SerializeField] int startingWave = 0;
+    [SerializeField] bool looping = false;
+    [SerializeField] bool firstWave = true;
+
+    public Random rnd = new Random();
 
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
+        do{
+            yield return StartCoroutine(SpawnAllWaves());
+        }
+        while(looping);
         
-        StartCoroutine(SpawnAllWaves());
     }
 
     // Update is called once per frame
@@ -22,11 +29,25 @@ public class EnemySpawner : MonoBehaviour
     }
 
     private IEnumerator SpawnAllWaves(){
-        for(int i = startingWave; i < waveConfigs.Count; i++){
+        if(firstWave){
+            int i = Random.Range(1, waveConfigs.Count - 1);
+            var currentWave = waveConfigs[i];
+            firstWave = false;
+            yield return new WaitForSeconds(6);
+            yield return SpawnAllEnemies(waveConfigs[i]);
+        } else {
+            int i = Random.Range(1, waveConfigs.Count - 1);
             var currentWave = waveConfigs[i];
             yield return new WaitForSeconds(waveConfigs[i].GetTimeBeforeWave());
             yield return SpawnAllEnemies(waveConfigs[i]);
+
         }
+
+        // for(int i = startingWave; i < waveConfigs.Count; i++){
+        //     var currentWave = waveConfigs[i];
+        //     yield return new WaitForSeconds(waveConfigs[i].GetTimeBeforeWave());
+        //     yield return SpawnAllEnemies(waveConfigs[i]);
+        // }
     }
 
     private IEnumerator SpawnAllEnemies(WaveConfig waveConfig){

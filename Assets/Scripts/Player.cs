@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -11,9 +12,19 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject laserPrefabOne;
     [SerializeField] GameObject laserPrefabTwo;
     [SerializeField] float projectileSpeed = 20f;
-    [SerializeField] float fireRate = 0.05f;
+    [SerializeField] float fireRate = 2f;
+    [SerializeField] GameObject particleExplosion;
+    [SerializeField] AudioClip fireSoundFX;
+    [SerializeField] float fireSFXVolume;
+
+    [SerializeField] AudioClip deathSFX;
+    [SerializeField] float deathSFXVolume = 0.75f;
+
+    [SerializeField] int collisionDamage = 1;
 
     Coroutine fireCoroutine;
+
+    [SerializeField] TextMeshProUGUI gameBoardText;
 
     float xMin;
     float xMax;
@@ -50,8 +61,9 @@ public class Player : MonoBehaviour
 
             laserOne.GetComponent<Rigidbody2D>().velocity = new Vector2(0,projectileSpeed);
             laserTwo.GetComponent<Rigidbody2D>().velocity = new Vector2(0,projectileSpeed);
+            AudioSource.PlayClipAtPoint(fireSoundFX, Camera.main.transform.position, fireSFXVolume);
             yield return new WaitForSeconds(fireRate);
-        }        
+        }
     }
 
     private void Move(){
@@ -73,11 +85,32 @@ public class Player : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D collider){
-        DamageDealer damageDealer = collider.gameObject.GetComponent<DamageDealer>();
-        health -= damageDealer.GetDamage();
-        damageDealer.Hit();
-        if(health <= 0){
-            Destroy(gameObject);
+
+        Debug.Log(collider.gameObject.name);
+
+        if(collider.gameObject.name == "Enemy(Clone)"){
+            Enemy enemy = collider.gameObject.GetComponent<Enemy>();
+            health -= enemy.GetDamage();
+        } else if(collider.gameObject.name == "EnemyProjectile(Clone)"){
+            DamageDealer damageDealer = collider.gameObject.GetComponent<DamageDealer>();
+            health -= damageDealer.GetDamage();
+            damageDealer.Hit();
         }
+        
+        Death();
+    }
+
+    public void Death(){
+        if(health <= 0){
+            AudioSource.PlayClipAtPoint(deathSFX, Camera.main.transform.position, deathSFXVolume);
+            Destroy(gameObject);
+            GameObject explosion = Instantiate(particleExplosion, transform.position, Quaternion.identity);
+            Destroy(explosion,3);
+        }
+        gameBoardText.text = "GAME OVER";
+    }
+
+    public int GetDamage(){
+        return collisionDamage;
     }
 }

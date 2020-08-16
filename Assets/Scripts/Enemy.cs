@@ -10,9 +10,20 @@ public class Enemy : MonoBehaviour
     [SerializeField] float maxTimeBetweenShots = 3f;
     [SerializeField] float projectileSpeed = 1f;
     [SerializeField] GameObject projectile;
+    [SerializeField] GameObject particleDebris;
+    [SerializeField] GameObject particleExplosion;
+    [SerializeField] AudioClip deathSFX;
+    [SerializeField] float deathSFXVolume = 0.75f;
+    [SerializeField] int enemyScorePoints = 10;
+    [SerializeField] int collisionDamage = 1;
+
+    ScoreBoard scoreBoard;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        scoreBoard = FindObjectOfType<ScoreBoard>();
         ResetShotCounter();
     }
 
@@ -25,8 +36,11 @@ public class Enemy : MonoBehaviour
     private void CountDownAndShoot(){
         shotCounter -= Time.deltaTime;
         if(shotCounter <= 0){
-            Fire();
-            ResetShotCounter();
+            if(GameObject.Find("Player"))
+            {
+                Fire();
+                ResetShotCounter();
+            }
         }
     }
 
@@ -35,16 +49,42 @@ public class Enemy : MonoBehaviour
     }
 
     private void Fire(){
-        GameObject bullet = Instantiate(projectile, transform.position + new Vector3(0,-1,0), Quaternion.identity);
-        bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(0,-projectileSpeed);
+        GameObject bullet = Instantiate(projectile, transform.position, Quaternion.identity);
+        //bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(0,-projectileSpeed);
+        bullet.GetComponent<Rigidbody2D>().velocity = (GameObject.Find("Player").transform.position - transform.position).normalized * projectileSpeed; 
     }
 
     private void OnTriggerEnter2D(Collider2D collider){
-        DamageDealer damageDealer = collider.gameObject.GetComponent<DamageDealer>();
-        health -= damageDealer.GetDamage();
-        damageDealer.Hit();
-        if(health <= 0){
-            Destroy(gameObject);
+    
+        Debug.Log(collider.gameObject.name);
+
+        if(collider.gameObject.name == "Player"){
+            Player player = collider.gameObject.GetComponent<Player>();
+            health -= player.GetDamage();
+        } else if(collider.gameObject.name == "PlayerLaser(Clone)"){
+            DamageDealer damageDealer = collider.gameObject.GetComponent<DamageDealer>();
+            
+            health -= damageDealer.GetDamage();
+            damageDealer.Hit();
         }
+
+
+        Death();
+    }
+
+    public void Death(){
+        if(health <= 0){
+            scoreBoard.AddScore(enemyScorePoints);
+            AudioSource.PlayClipAtPoint(deathSFX, Camera.main.transform.position, deathSFXVolume);
+            Destroy(gameObject);
+            GameObject explosion = Instantiate(particleExplosion, transform.position, Quaternion.identity);
+            Destroy(explosion,3);
+            GameObject debris = Instantiate(particleDebris, transform.position, Quaternion.identity);
+            Destroy(debris,3);
+        }
+    }
+
+    public int GetDamage(){
+        return collisionDamage;
     }
 }
